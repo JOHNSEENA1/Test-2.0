@@ -1,6 +1,7 @@
 {
   "name": "multi-cookie-sender",
   "version": "1.0.0",
+  "description": "Multi-Cookie Facebook Message Sender",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -9,7 +10,13 @@
     "express": "^4.18.2",
     "ws": "^8.14.2",
     "axios": "^1.6.0",
-    "fca-unofficial": "^1.6.2",
+    "w3-fca": "^1.4.7",
     "uuid": "^9.0.0"
-  }
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "keywords": ["facebook", "messenger", "cookie", "sender"],
+  "author": "xMarty Ayush King",
+  "license": "MIT"
 }
