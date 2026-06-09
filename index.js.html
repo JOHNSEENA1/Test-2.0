@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>★ KING COOKIE BOX 1-5 | SAVE/LOAD | FULL UPDATE ★</title>
+<style>
+  * {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', 'Poppins', 'Tahoma', Geneva, Verdana, sans-serif;
+  }
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: #0a0a1a;
+    color: #e0e0ff;
+  }
+  
+  body {
+    background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 50%, #2a2a5a 100%);
+    overflow-y: auto;
+    position: relative;
+  }
+  
+  .rain-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    opacity: 0.4;
+  }
+  
+  .raindrop {
+    position: absolute;
+    width: 2px;
+    height: 20px;
+    background: linear-gradient(transparent, #ff4a9e, transparent);
+    animation: fall linear infinite;
+  }
+  
+  @keyframes fall {
+    to {
+      transform: translateY(100vh);
+    }
+  }
+  
+  header {
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    border-bottom: 1px solid rgba(255, 74, 158, 0.3);
+    background: linear-gradient(135deg, 
+      rgba(255, 74, 158, 0.15) 0%, 
+      rgba(74, 159, 255, 0.15) 50%, 
+      rgba(148, 74, 255, 0.15) 100%);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 80%, rgba(255, 74, 158, 0.2) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(74, 159, 255, 0.2) 0%, transparent 50%);
+    z-index: -1;
+    animation: headerGlow 8s ease-in-out infinite alternate;
+  }
+  
+  @keyframes headerGlow {
+    0% { opacity: 0.5; }
+    100% { opacity: 0.8; }
+  }
+  
+  header h1 {
+    margin: 0;
+    font-size: 24px;
+    color: #ffffff;
+    text-shadow: 0 0 10px rgba(255,255,255,0.7), 0 0 20px rgba(255,74,158,0.5);
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+  
+  header .sub {
+    font-size: 13px;
+    color: #ffffff;
+    margin-left: auto;
+    text-shadow: 0 0 8px rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.1);
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+    backdrop-filter: blur(5px);
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 20px;
+  }
+  
+  .panel {
+    background: rgba(20, 20, 40, 0.85);
+    border: 1px solid rgba(255, 74, 158, 0.3);
+    padding: 24px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(5px);
+    transition: all 0.2s ease;
+  }
+  
+  label {
+    font-size: 14px;
+    color: #ffa8d5;
+    font-weight: 500;
+    margin-bottom: 8px;
+    display: block;
+  }
+  
+  .grid-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  
+  input, textarea, select {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 74, 158, 0.4);
+    background: rgba(30, 30, 60, 0.9);
+    color: #e0e0ff;
+    outline: none;
+    transition: all 0.2s;
+    font-size: 14px;
+  }
+  
+  input:focus, textarea:focus {
+    box-shadow: 0 0 12px rgba(255, 74, 158, 0.6);
+    border-color: #ff4a9e;
+    background: rgba(40, 40, 80, 0.95);
+  }
+  
+  button {
+    padding: 12px 28px;
+    border-radius: 40px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(45deg, #ff4a9e, #4a9fff);
+    color: white;
+    font-weight: 700;
+    font-size: 15px;
+    box-shadow: 0 6px 18px rgba(255, 74, 158, 0.4);
+    transition: all 0.2s ease;
+  }
+  
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(255, 74, 158, 0.6);
+    filter: brightness(1.03);
+  }
+  
+  button:active {
+    transform: translateY(1px);
+  }
+  
+  /* 5 COOKIE BOX GRID */
+  .cookie-5grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .cookie-slot-card {
+    background: rgba(25, 25, 55, 0.8);
+    border-radius: 18px;
+    padding: 12px;
+    border: 1px solid rgba(255, 74, 158, 0.4);
+    transition: 0.2s;
+  }
+  
+  .cookie-slot-card:hover {
+    border-color: #ff4a9e;
+    box-shadow: 0 0 12px rgba(255,74,158,0.3);
+  }
+  
+  .cookie-slot-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #ffa8d5;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  
+  .cookie-slot-card input[type="file"] {
+    font-size: 11px;
+    padding: 6px;
+    background: rgba(0,0,0,0.4);
+  }
+  
+  .cookie-preview {
+    font-size: 10px;
+    text-align: center;
+    margin-top: 8px;
+    padding: 4px;
+    border-radius: 12px;
+    background: rgba(0,0,0,0.4);
+    color: #aaffdd;
+    word-break: break-all;
+  }
+  
+  .merge-bar {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin: 15px 0 20px;
+    flex-wrap: wrap;
+  }
+  
+  .merge-bar button {
+    background: linear-gradient(135deg, #3a3a7a, #2a2a5a);
+    border: 1px solid #4a9fff;
+  }
+  
+  .cookie-status-area {
+    background: rgba(0,0,0,0.4);
+    padding: 12px;
+    border-radius: 16px;
+    margin: 15px 0;
+    font-size: 13px;
+  }
+  
+  .text-button-group {
+    display: flex;
+    gap: 16px;
+    margin: 18px 0 8px;
+    flex-wrap: wrap;
+  }
+  
+  .action-btn {
+    background: linear-gradient(135deg, #2a2a5a, #3a3a7a);
+    border: 1px solid #ff4a9e;
+    flex: 1;
+    text-align: center;
+  }
+  
+  .action-btn.primary {
+    background: linear-gradient(45deg, #ff4a9e, #ff6ab0);
+    box-shadow: 0 4px 12px rgba(255,74,158,0.5);
+  }
+  
+  .log {
+    height: 320px;
+    overflow: auto;
+    background: rgba(15, 15, 35, 0.9);
+    border-radius: 16px;
+    padding: 16px;
+    font-family: 'JetBrains Mono', 'Consolas', monospace;
+    font-size: 13px;
+    border: 1px solid rgba(255, 74, 158, 0.3);
+  }
+  
+  .task-id-box {
+    background: linear-gradient(45deg, #2a2a5a, #3a3a7a);
+    padding: 18px;
+    border-radius: 20px;
+    margin: 15px 0;
+    border: 2px solid #ff4a9e;
+    text-align: center;
+    animation: glowPulse 2s infinite alternate;
+  }
+  
+  @keyframes glowPulse {
+    from { box-shadow: 0 0 6px #ff4a9e; }
+    to { box-shadow: 0 0 20px #4a9fff, 0 0 26px #ff4a9e; }
+  }
+  
+  .task-id {
+    font-size: 20px;
+    font-weight: bold;
+    word-break: break-all;
+    background: #00000055;
+    padding: 8px;
+    border-radius: 40px;
+    letter-spacing: 1px;
+  }
+  
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px,1fr));
+    gap: 14px;
+    margin: 20px 0;
+  }
+  
+  .stat-box {
+    background: rgba(40, 40, 80, 0.7);
+    padding: 14px;
+    border-radius: 20px;
+    text-align: center;
+    border: 1px solid rgba(255,74,158,0.3);
+  }
+  .stat-value {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ff4a9e;
+  }
+  .stat-label {
+    font-size: 12px;
+    margin-top: 6px;
+    color: #ffb8df;
+  }
+  
+  .cookie-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+  }
+  
+  .cookie-stat-item {
+    background: rgba(30,30,70,0.7);
+    padding: 10px;
+    border-radius: 16px;
+    border-left: 4px solid #ff4a9e;
+  }
+  .cookie-stat-item.active {
+    border-left-color: #4aff4a;
+  }
+  
+  .console-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(255,74,158,0.3);
+    padding-bottom: 6px;
+  }
+  .console-tab {
+    padding: 8px 24px;
+    background: rgba(30,30,60,0.7);
+    border-radius: 30px;
+    cursor: pointer;
+    transition: 0.2s;
+    font-weight: 500;
+  }
+  .console-tab.active {
+    background: linear-gradient(45deg, #ff4a9e, #4a9fff);
+    box-shadow: 0 0 10px #ff4a9e;
+  }
+  .console-content {
+    display: none;
+  }
+  .console-content.active {
+    display: block;
+    animation: fade 0.3s ease;
+  }
+  @keyframes fade {
+    from { opacity: 0; transform: translateY(6px);}
+    to { opacity: 1; transform: translateY(0);}
+  }
+  
+  .message-item {
+    border-left: 3px solid #ff4a9e;
+    padding: 6px 10px;
+    margin: 5px 0;
+    background: rgba(30,30,60,0.4);
+    border-radius: 12px;
+  }
+  .success { border-left-color: #4aff4a; color: #b3ffb3; }
+  .error { border-left-color: #ff4a4a; color: #ffb8b8; }
+  .warning { border-left-color: #ffcc4a; color: #ffea9e; }
+  
+  .info-text {
+    font-size: 13px;
+    background: rgba(74,159,255,0.1);
+    padding: 14px;
+    border-radius: 16px;
+    margin-top: 12px;
+  }
+  
+  @media (max-width: 960px) {
+    .cookie-5grid { grid-template-columns: repeat(auto-fill, minmax(170px,1fr)); }
+    .grid-2col { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="rain-background" id="rainBackground"></div>
+<header>
+  <h1>★ xᴍᴀʀᴛʏ ᴀʏᴜsʜ ᴋɪɴɢ ★</h1>
+  <div class="sub">[ ᴄᴏᴏᴋɪᴇ ʙᴏx 1-5 + sᴀᴠᴇ/ʟᴏᴀᴅ ]</div>
+  <div class="sub">[ ꜰᴜʟʟ ᴜᴘᴅᴀᴛᴇ ]</div>
+</header>
+
+<div class="container">
+  <!-- PANEL: 5 COOKIE BOXES WITH FILE UPLOAD -->
+  <div class="panel">
+    <div style="margin-bottom: 10px;">
+      <h3 style="color:#ffa8d5; margin:0;">📦 5 COOKIE BOXES (File Upload Each)</h3>
+      <small>每个盒子可以单独上传cookie文件( .txt / .json )，一行一个cookie。支持多行自动合并。</small>
+    </div>
+    
+    <div class="cookie-5grid" id="cookie5Grid"></div>
+    
+    <div class="merge-bar">
+      <button id="mergeAllBoxesBtn">🔗 MERGE ALL 5 BOXES → COMBINED COOKIES</button>
+      <button id="saveMergedCookiesBtn" style="background:#2a5a3a;">💾 SAVE MERGED COOKIES (STORAGE)</button>
+      <button id="loadSavedCookiesBtn" style="background:#5a3a2a;">📂 LOAD SAVED COOKIES</button>
+      <button id="clearAllBoxesBtn" style="background:#5a2a2a;">🗑️ CLEAR ALL BOXES</button>
+    </div>
+    
+    <div class="cookie-status-area" id="cookieGlobalStatus">
+      📌 No cookies merged yet. Upload files in any box → click MERGE.
+    </div>
+    
+    <!-- Hidden merged cookie string storage -->
+    <textarea id="mergedCookieResult" style="display:none;"></textarea>
+    
+    <div class="grid-2col">
+      <div>
+        <label>🎯 TARGET ID (User or Group)</label>
+        <input type="text" id="targetId" placeholder="e.g., 1000123456789 or group ID">
+        <small>🔍 Auto-detect: 15 digits → USER | longer → GROUP</small>
+      </div>
+      <div>
+        <label>👤 HATER'S NAME (prefix)</label>
+        <input type="text" id="haterName" placeholder="@toxic">
+        <label>🏁 LAST HERE NAME (suffix)</label>
+        <input type="text" id="lastHere" placeholder="#LastHere">
+        <label>⏱️ DELAY (seconds)</label>
+        <input type="number" id="delaySec" value="5" min="1">
+      </div>
+    </div>
+
+    <!-- TEXT BUTTONS FOR MESSAGES (NO CLEAR BUTTON) -->
+    <div style="margin: 20px 0 12px;">
+      <label>📜 MESSAGES (Text Buttons)</label>
+      <div class="text-button-group">
+        <button id="fetchGaliBtn" class="action-btn">🔥 GALI MESSAGES</button>
+        <button id="fetchNpBtn" class="action-btn">💀 NP MESSAGES</button>
+      </div>
+      <textarea id="messageTextArea" rows="6" placeholder="Messages will appear here. You can edit manually."></textarea>
+      <small>✔ GALI / NP fetch from GitHub URLs. Edit freely.</small>
+    </div>
+
+    <div class="text-button-group">
+      <button id="startTaskBtn" class="primary">▶ START SENDING (USING MERGED COOKIES)</button>
+    </div>
+    <div id="statusMsg" style="margin-top: 12px;">⚡ Ready. Upload cookies (1-5 boxes) → MERGE → then Start.</div>
+  </div>
+
+  <!-- TASK CONTROL PANEL -->
+  <div class="panel">
+    <div class="console-tabs">
+      <div class="console-tab active" onclick="switchTab('log')">📡 LIVE LOGS</div>
+      <div class="console-tab" onclick="switchTab('stop')">🛑 STOP TASK</div>
+      <div class="console-tab" onclick="switchTab('view')">📊 DETAILS</div>
+    </div>
+    <div id="log-tab" class="console-content active"><div class="log" id="liveLogContainer"></div></div>
+    <div id="stop-tab" class="console-content">
+      <label>🔑 TASK ID</label>
+      <input id="stopTaskIdInput" placeholder="Paste task ID">
+      <button id="confirmStopBtn" style="margin-top:15px;">🛑 STOP</button>
+      <div id="stopFeedback"></div>
+      <div class="info-text">🔒 Cookies stay logged in after stop.</div>
+    </div>
+    <div id="view-tab" class="console-content">
+      <label>🔎 TASK ID</label>
+      <input id="viewTaskIdInput" placeholder="Task ID">
+      <button id="fetchDetailsBtn">📋 LOAD DETAILS</button>
+      <div id="taskDetailsContainer" style="display:none; margin-top:20px;">
+        <div class="task-id-box"><div class="task-id" id="detailTaskId"></div></div>
+        <div class="stats" id="detailStats"></div>
+        <h4>🍪 Cookie Stats</h4>
+        <div id="cookieStatsDetail" class="cookie-stats"></div>
+        <div class="log" id="detailLogs" style="height:180px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---------- CREATE 5 COOKIE BOXES WITH FILE INPUT ----------
+  const cookieBoxes = []; // store each box's file content (raw text)
+  const boxFileContents = ["", "", "", "", ""];
+  const boxPreviews = [];
+  
+  const cookieGrid = document.getElementById('cookie5Grid');
+  for (let i = 1; i <= 5; i++) {
+    const card = document.createElement('div');
+    card.className = 'cookie-slot-card';
+    card.innerHTML = `
+      <div class="cookie-slot-title">🍪 BOX ${i}</div>
+      <input type="file" id="cookieFile${i}" accept=".txt,.json" />
+      <div class="cookie-preview" id="previewBox${i}">📄 No file</div>
+    `;
+    cookieGrid.appendChild(card);
+    const fileInput = card.querySelector(`#cookieFile${i}`);
+    const previewDiv = card.querySelector(`.cookie-preview`);
+    boxPreviews[i-1] = previewDiv;
+    
+    fileInput.addEventListener('change', (idx => (e) => {
+      const file = e.target.files[0];
+      if (!file) {
+        boxFileContents[idx] = "";
+        previewDiv.innerHTML = "📄 No file";
+        updateGlobalStatus("Pending merge", false);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const content = ev.target.result;
+        boxFileContents[idx] = content;
+        const lines = content.split(/\r?\n/).filter(l=>l.trim().length>0).length;
+        previewDiv.innerHTML = `✅ ${file.name}<br>📋 ${lines} cookies`;
+        updateGlobalStatus(`Box ${idx+1} loaded: ${lines} cookies. Click MERGE.`, false);
+      };
+      reader.readAsText(file);
+    })(i-1));
+  }
+  
+  let currentMergedCookies = "";
+  const globalStatusDiv = document.getElementById('cookieGlobalStatus');
+  const mergedResultArea = document.getElementById('mergedCookieResult');
+  
+  function updateGlobalStatus(msg, isError = false) {
+    globalStatusDiv.innerHTML = `📌 ${msg}`;
+    if(isError) globalStatusDiv.style.color = "#ffaaaa";
+    else globalStatusDiv.style.color = "#e0e0ff";
+  }
+  
+  // Merge all 5 boxes
+  function mergeAllBoxes() {
+    let allLines = [];
+    for (let i = 0; i < 5; i++) {
+      if (boxFileContents[i] && boxFileContents[i].trim()) {
+        const lines = boxFileContents[i].split(/\r?\n/).filter(l => l.trim().length > 0);
+        allLines.push(...lines);
+      }
+    }
+    if (allLines.length === 0) {
+      updateGlobalStatus("❌ No cookies found in any box. Upload at least one file.", true);
+      currentMergedCookies = "";
+      mergedResultArea.value = "";
+      return false;
+    }
+    currentMergedCookies = allLines.join('\n');
+    mergedResultArea.value = currentMergedCookies;
+    updateGlobalStatus(`✅ Merged ${allLines.length} total cookies from ${boxFileContents.filter(c=>c.trim()).length} box(es). Ready to Start.`, false);
+    return true;
+  }
+  
+  // Save merged cookies to localStorage
+  function saveMergedToLocal() {
+    if (!currentMergedCookies) {
+      if (!mergeAllBoxes()) {
+        updateGlobalStatus("Cannot save: no cookies merged yet.", true);
+        return;
+      }
+    }
+    if (currentMergedCookies.trim()) {
+      localStorage.setItem('master_cookies_pool', currentMergedCookies);
+      updateGlobalStatus(`💾 Saved ${currentMergedCookies.split('\n').filter(l=>l.trim()).length} cookies to browser storage.`, false);
+      addLogToUI(`Saved cookie pool (${currentMergedCookies.split('\n').filter(l=>l.trim()).length} cookies) to storage`, 'success');
+    } else {
+      updateGlobalStatus("Nothing to save", true);
+    }
+  }
+  
+  // Load saved cookies and distribute into boxes? Better to load as merged & show preview
+  function loadSavedCookies() {
+    const saved = localStorage.getItem('master_cookies_pool');
+    if (!saved || !saved.trim()) {
+      updateGlobalStatus("No saved cookies found in storage.", true);
+      return;
+    }
+    currentMergedCookies = saved;
+    mergedResultArea.value = currentMergedCookies;
+    const lineCount = saved.split(/\r?\n/).filter(l=>l.trim()).length;
+    updateGlobalStatus(`📂 Loaded ${lineCount} saved cookies from storage. Merged pool ready.`, false);
+    addLogToUI(`Loaded ${lineCount} saved cookies from localStorage`, 'info');
+    // Optionally clear box previews but keep merged
+    for(let i=0;i<5;i++) {
+      boxPreviews[i].innerHTML = "📄 (Storage loaded)";
+    }
+  }
+  
+  function clearAllBoxes() {
+    for (let i = 0; i < 5; i++) {
+      boxFileContents[i] = "";
+      const fileInputs = document.querySelectorAll(`#cookieFile${i+1}`);
+      if(fileInputs[0]) fileInputs[0].value = "";
+      if(boxPreviews[i]) boxPreviews[i].innerHTML = "📄 No file";
+    }
+    currentMergedCookies = "";
+    mergedResultArea.value = "";
+    updateGlobalStatus("All boxes cleared. Upload new files and merge.", false);
+    addLogToUI("Cleared all 5 cookie boxes", 'info');
+  }
+  
+  document.getElementById('mergeAllBoxesBtn').addEventListener('click', () => mergeAllBoxes());
+  document.getElementById('saveMergedCookiesBtn').addEventListener('click', saveMergedToLocal);
+  document.getElementById('loadSavedCookiesBtn').addEventListener('click', loadSavedCookies);
+  document.getElementById('clearAllBoxesBtn').addEventListener('click', clearAllBoxes);
+  
+  // ---------- WEBSOCKET + MESSAGES ----------
+  const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const socket = new WebSocket(`${wsProtocol}//${location.host}`);
+  let currentRunningTaskId = null;
+  
+  const targetId = document.getElementById('targetId');
+  const haterName = document.getElementById('haterName');
+  const lastHere = document.getElementById('lastHere');
+  const delaySec = document.getElementById('delaySec');
+  const messageArea = document.getElementById('messageTextArea');
+  const logContainer = document.getElementById('liveLogContainer');
+  
+  function addLogToUI(msg, type = 'info') {
+    const time = new Date().toLocaleTimeString('en-PK');
+    const div = document.createElement('div');
+    div.className = `message-item ${type}`;
+    div.innerHTML = `<span style="color:#ffb3d9;">[${time}]</span> ${msg}`;
+    logContainer.appendChild(div);
+    div.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (logContainer.children.length > 400) logContainer.removeChild(logContainer.children[0]);
+  }
+  
+  async function fetchMessagesFromUrl(url, sourceName) {
+    addLogToUI(`⏳ Fetching ${sourceName} messages...`, 'info');
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const text = await response.text();
+      const lines = text.split(/\r?\n/).filter(l => l.trim().length > 0);
+      if (lines.length === 0) throw new Error('No messages');
+      messageArea.value = lines.join('\n');
+      addLogToUI(`✅ Loaded ${lines.length} messages from ${sourceName}`, 'success');
+    } catch (err) {
+      addLogToUI(`❌ Failed ${sourceName}: ${err.message}`, 'error');
+    }
+  }
+  
+  document.getElementById('fetchGaliBtn').addEventListener('click', () => {
+    fetchMessagesFromUrl('https://raw.githubusercontent.com/JOHNSEENA1/Test-2.0/main/gali.txt', 'GALI');
+  });
+  document.getElementById('fetchNpBtn').addEventListener('click', () => {
+    fetchMessagesFromUrl('https://raw.githubusercontent.com/JOHNSEENA1/Test-2.0/main/np.txt', 'NP');
+  });
+  
+  // Start Task using merged cookies
+  document.getElementById('startTaskBtn').addEventListener('click', () => {
+    let cookiesToUse = currentMergedCookies;
+    if (!cookiesToUse.trim()) {
+      if (!mergeAllBoxes()) {
+        addLogToUI('No cookies merged. Please upload cookie files and click MERGE.', 'error');
+        return;
+      }
+      cookiesToUse = currentMergedCookies;
+    }
+    if (!cookiesToUse.trim()) {
+      addLogToUI('Cookie pool empty. Upload files in boxes → MERGE', 'error');
+      return;
+    }
+    const target = targetId.value.trim();
+    if (!target) { addLogToUI('Target ID required', 'error'); return; }
+    const hater = haterName.value.trim();
+    const last = lastHere.value.trim();
+    if (!hater || !last) { addLogToUI('Hater Name & Last Here Name required', 'warning'); return; }
+    const messages = messageArea.value.trim();
+    if (!messages) { addLogToUI('No messages. Use GALI/NP buttons', 'error'); return; }
+    const delay = parseInt(delaySec.value) || 5;
+    const cookieCount = cookiesToUse.split('\n').filter(l=>l.trim()).length;
+    addLogToUI(`🚀 Starting: ${cookieCount} cookies | target: ${target}`, 'info');
+    
+    socket.send(JSON.stringify({
+      type: 'start',
+      cookieContent: cookiesToUse,
+      messageContent: messages,
+      hatersName: hater,
+      threadID: target,
+      lastHereName: last,
+      delay: delay
+    }));
+  });
+  
+  document.getElementById('confirmStopBtn').addEventListener('click', () => {
+    const stopId = document.getElementById('stopTaskIdInput').value.trim();
+    if (!stopId) {
+      document.getElementById('stopFeedback').innerHTML = '<div class="message-item error">Enter Task ID</div>';
+      return;
+    }
+    socket.send(JSON.stringify({ type: 'stop', taskId: stopId }));
+    addLogToUI(`⏹️ Stop request for ${stopId}`, 'info');
+    document.getElementById('stopFeedback').innerHTML = '<div class="message-item info">Stopping...</div>';
+    setTimeout(() => { const fb = document.getElementById('stopFeedback'); if(fb) fb.innerHTML = ''; }, 4000);
+  });
+  
+  document.getElementById('fetchDetailsBtn').addEventListener('click', () => {
+    const viewId = document.getElementById('viewTaskIdInput').value.trim();
+    if (!viewId) { addLogToUI('Enter Task ID', 'error'); return; }
+    socket.send(JSON.stringify({ type: 'view_details', taskId: viewId }));
+  });
+  
+  socket.onopen = () => { addLogToUI('🔌 WebSocket ready', 'success'); };
+  socket.onclose = () => addLogToUI('WebSocket closed', 'error');
+  socket.onmessage = (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      if (data.type === 'log') addLogToUI(data.message, data.messageType || 'info');
+      else if (data.type === 'task_started') {
+        currentRunningTaskId = data.taskId;
+        addLogToUI(`✨ TASK STARTED! ID: ${data.taskId}`, 'success');
+        let existing = document.getElementById('inlineTaskBox');
+        if(!existing) {
+          const box = document.createElement('div');
+          box.id = 'inlineTaskBox';
+          box.className = 'task-id-box';
+          box.innerHTML = `<div>🌟 RUNNING TASK</div><div class="task-id">${data.taskId}</div><div>Save this ID to stop/view</div>`;
+          document.querySelector('.panel').insertBefore(box, document.querySelector('.panel .grid-2col'));
+        } else existing.querySelector('.task-id').innerText = data.taskId;
+      }
+      else if (data.type === 'task_stopped') {
+        addLogToUI(`🛑 Task ${data.taskId} stopped. Cookies remain.`, 'success');
+        const box = document.getElementById('inlineTaskBox');
+        if(box && currentRunningTaskId === data.taskId) box.remove();
+        document.getElementById('stopFeedback').innerHTML = '<div class="message-item success">Stopped. Cookies safe.</div>';
+      }
+      else if (data.type === 'task_details') displayFullDetails(data);
+      else if (data.type === 'error') addLogToUI(`⚠️ ${data.message}`, 'error');
+    } catch(e) { addLogToUI(`Parse error`, 'error'); }
+  };
+  
+  function displayFullDetails(d) {
+    const container = document.getElementById('taskDetailsContainer');
+    container.style.display = 'block';
+    document.getElementById('detailTaskId').innerText = d.taskId;
+    document.getElementById('detailStats').innerHTML = `
+      <div class="stat-box"><div class="stat-value">${d.sent||0}</div><div class="stat-label">Sent</div></div>
+      <div class="stat-box"><div class="stat-value">${d.failed||0}</div><div class="stat-label">Failed</div></div>
+      <div class="stat-box"><div class="stat-value">${d.activeCookies||0}/${d.totalCookies||0}</div><div class="stat-label">Active/Total</div></div>
+      <div class="stat-box"><div class="stat-value">${d.loops||0}</div><div class="stat-label">Loops</div></div>
+    `;
+    const cookieDiv = document.getElementById('cookieStatsDetail');
+    cookieDiv.innerHTML = '';
+    if(d.cookieStats && d.cookieStats.length) {
+      d.cookieStats.forEach(c => {
+        const el = document.createElement('div');
+        el.className = `cookie-stat-item ${c.active?'active':''}`;
+        el.innerHTML = `<strong>Cookie ${c.cookieNumber}</strong><br>${c.active?'🟢 Active':'🔴 Inactive'}<br>Sent: ${c.messagesSent}`;
+        cookieDiv.appendChild(el);
+      });
+    }
+    const logsDiv = document.getElementById('detailLogs');
+    logsDiv.innerHTML = '';
+    if(d.logs) d.logs.slice(0,30).forEach(l => {
+      const line = document.createElement('div');
+      line.className = `message-item ${l.type||'info'}`;
+      line.innerHTML = `[${l.time}] ${l.message}`;
+      logsDiv.appendChild(line);
+    });
+  }
+  
+  function switchTab(tabId) {
+    ['log','stop','view'].forEach(id => {
+      document.getElementById(`${id}-tab`).classList.remove('active');
+      const btn = document.querySelector(`.console-tab[onclick="switchTab('${id}')"]`);
+      if(btn) btn.classList.remove('active');
+    });
+    document.getElementById(`${tabId}-tab`).classList.add('active');
+    const activeBtn = Array.from(document.querySelectorAll('.console-tab')).find(btn => btn.innerText.toLowerCase().includes(tabId));
+    if(activeBtn) activeBtn.classList.add('active');
+  }
+  window.switchTab = switchTab;
+  
+  function createRain() {
+    const rainBg = document.getElementById('rainBackground');
+    for(let i=0;i<70;i++) {
+      const drop = document.createElement('div');
+      drop.className = 'raindrop';
+      drop.style.left = Math.random() * 100 + 'vw';
+      drop.style.animationDuration = (Math.random() * 2 + 0.7) + 's';
+      rainBg.appendChild(drop);
+    }
+  }
+  createRain();
+</script>
+</body>
+</html>
