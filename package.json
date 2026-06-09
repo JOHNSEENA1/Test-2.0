@@ -10,13 +10,10 @@
     "express": "^4.18.2",
     "ws": "^8.14.2",
     "axios": "^1.6.0",
-    "w3-fca": "^1.4.7",
+    "fca-unofficial": "^1.5.0",
     "uuid": "^9.0.0"
   },
   "engines": {
     "node": ">=16.0.0"
-  },
-  "keywords": ["facebook", "messenger", "cookie", "sender"],
-  "author": "xMarty Ayush King",
-  "license": "MIT"
+  }
 }
