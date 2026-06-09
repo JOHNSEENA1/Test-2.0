@@ -1,28 +1,15 @@
 {
-  "name": "rafay-messaging-system",
+  "name": "multi-cookie-sender",
   "version": "1.0.0",
-  "description": "Rafay Multi-User Messaging System with Auto-Recovery",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
+    "start": "node server.js"
   },
-  "keywords": [
-    "messaging",
-    "automation",
-    "facebook",
-    "multi-user"
-  ],
-  "author": "Rafay",
-  "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
     "ws": "^8.14.2",
-    "axios": "^1.6.2",
-    "fca-mafiya": "latest",
-    "uuid": "^9.0.1"
-  },
-  "engines": {
-    "node": ">=16.0.0"
+    "axios": "^1.6.0",
+    "w3-fca": "^1.0.0",
+    "uuid": "^9.0.0"
   }
 }
