@@ -3,7 +3,7 @@
 
 const fs = require('fs');
 const express = require('express');
-const wiegine = require('w3-fca');
+const wiegine = require('fca-unofficial');
 const WebSocket = require('ws');
 const axios = require('axios');
 const { v4: uuidv4 } = require('uuid');
